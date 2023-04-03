@@ -1,0 +1,85 @@
+<template>
+  <div
+    style="
+      text-align: center;
+      background-color: #f1f1f3;
+      height: 100%;
+      padding: 0px;
+      margin: 0px;
+    "
+  >
+    <h1 style="font-size: 50px">{{ user.object.account + "，欢迎使用！" }}</h1>
+    <el-descriptions title="个人中心" :column="2" size="40" border>
+      <el-descriptions-item>
+        <template slot="label">
+          <i class="el-icon-s-custom"></i>
+          账号
+        </template>
+        {{ user.object.account }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">
+          <i class="el-icon-mobile-phone"></i>
+          电话
+        </template>
+        {{ user.object.phone }}
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">
+          <i class="el-icon-location-outline"></i>
+          性别
+        </template>
+        <el-tag
+          :type="user.object.sex == '1' ? 'primary' : 'danger'"
+          disable-transitions
+          ><i :class="user.object.sex == 1 ? 'el-icon-male' : 'el-icon-female'"></i
+          >{{ user.object.sex == 1 ? "男" : "女" }}</el-tag
+        >
+      </el-descriptions-item>
+      <el-descriptions-item>
+        <template slot="label">
+          <i class="el-icon-tickets"></i>
+          角色
+        </template>
+        <el-tag type="success" disable-transitions>{{
+          user.roleId == 0
+            ? "超级管理员"
+            : user.roleId == 1
+            ? "快递站点"
+            : user.roleId == 2
+            ? "快递员"
+            : "用户"
+        }}</el-tag>
+      </el-descriptions-item>
+    </el-descriptions>
+
+    <DateUtils></DateUtils>
+  </div>
+</template>
+
+<script>
+import DateUtils from "./DateUtils";
+export default {
+  name: "Home",
+  components: { DateUtils },
+  data() {
+    return {
+      user: {},
+    };
+  },
+  computed: {},
+  methods: {},
+  created() {
+    this.user = JSON.parse(sessionStorage.getItem("info"));
+  },
+};
+</script>
+
+<style scoped>
+.el-descriptions {
+  width: 90%;
+
+  margin: 0 auto;
+  text-align: center;
+}
+</style>
