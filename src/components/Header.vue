@@ -8,7 +8,7 @@
       ></i>
     </div>
     <div style="flex: 1; text-align: center; font-size: 34px">
-      <span>快递配送系统</span>
+      <span>家政服务系统</span>
     </div>
     <el-dropdown>
       <span

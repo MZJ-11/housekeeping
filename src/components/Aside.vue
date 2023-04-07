@@ -1,19 +1,7 @@
 <template>
-  <el-menu
-    background-color="#545c64"
-    text-color="#fff"
-    active-text-color="#ffd04b"
-    style="height: 100%"
-    default-active="/home"
-    :collapse="isCollapse"
-    :collapse-transition="false"
-    router
-  >
-    <el-menu-item
-      :index="'/index/' + item.menuClick"
-      v-for="(item, i) in authMenu"
-      :key="i"
-    >
+  <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" style="height: 100%"
+    default-active="/home" :collapse="isCollapse" :collapse-transition="false" router>
+    <el-menu-item :index="'/index/' + item.menuClick" v-for="(item, i) in authMenu" :key="i">
       <i :class="item.menuIcon"></i>
       <span slot="title">{{ item.menuName }}</span>
     </el-menu-item>
@@ -31,37 +19,37 @@ export default {
           menuClick: "home",
           menuName: "首页",
           menuIcon: "el-icon-star-off",
-          auth: [0, 1, 2, 3],
+          auth: [1, 2, 3, 4],
         },
         {
           menuClick: "user",
           menuName: "用户管理",
           menuIcon: "el-icon-user-solid",
-          auth: [0],
+          auth: [4],
         },
         {
-          menuClick: "postman",
-          menuName: "快递员管理",
+          menuClick: "worker",
+          menuName: "工人管理",
           menuIcon: "el-icon-s-custom",
-          auth: [0, 1],
+          auth: [2, 4],
         },
         {
-          menuClick: "station",
-          menuName: "站点管理",
+          menuClick: "company",
+          menuName: "公司管理",
           menuIcon: "el-icon-menu",
-          auth: [0],
+          auth: [4],
         },
         {
-          menuClick: "package",
-          menuName: "快递管理",
+          menuClick: "order",
+          menuName: "订单管理",
           menuIcon: "el-icon-s-management",
-          auth: [1, 2, 3],
+          auth: [1, 2, 3, 4],
         },
         {
           menuClick: "send",
           menuName: "用户下单",
           menuIcon: "el-icon-s-management",
-          auth: [3],
+          auth: [1,],
         }
       ],
     };
@@ -82,5 +70,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

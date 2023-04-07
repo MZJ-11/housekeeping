@@ -10,7 +10,7 @@
       ></el-input>
       <el-input
         v-model="realName"
-        placeholder="请输入站点名"
+        placeholder="请输入姓名"
         suffix-icon="el-icon-search"
         style="width: 200px"
         @keyup.enter.native="getAllList"
@@ -26,50 +26,26 @@
     </div>
 
     <el-table
-      :data="stationList"
+      :data="postmanList"
       :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
       border
     >
-      <el-table-column prop="stationId" label="ID" align="center" width="60">
+      <el-table-column prop="postmanId" label="ID" align="center" width="60">
       </el-table-column>
-      <el-table-column prop="account" label="账号" align="center" width="100">
+      <el-table-column prop="account" label="账号" align="center" width="150">
       </el-table-column>
-      <el-table-column
-        prop="realName"
-        label="快递站点名"
-        align="center"
-        width="180"
-      >
+      <el-table-column prop="realName" label="姓名" align="center" width="150">
       </el-table-column>
-      <el-table-column prop="province" label="省份" align="center" width="80">
+      <el-table-column prop="sex" label="性别" align="center" width="150">
         <template slot-scope="scope">
-          <el-tag type="" disable-transitions effect="plain">{{
-            scope.row.province
-          }}</el-tag>
+          <el-tag
+            :type="scope.row.sex == 1 ? 'primary' : 'success'"
+            disable-transitions
+            >{{ scope.row.sex == 1 ? "男" : "女" }}</el-tag
+          >
         </template>
       </el-table-column>
-      <el-table-column prop="city" label="市" align="center" width="80">
-        <template slot-scope="scope">
-          <el-tag type="success" disable-transitions effect="plain">{{
-            scope.row.city
-          }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="county" label="县" align="center" width="80">
-        <template slot-scope="scope">
-          <el-tag type="info" disable-transitions effect="plain">{{
-            scope.row.county
-          }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="detail"
-        label="详细地址"
-        align="center"
-        width="180"
-      >
-      </el-table-column>
-      <el-table-column prop="phone" label="电话" align="center" width="100">
+      <el-table-column prop="phone" label="电话" align="center" width="180">
       </el-table-column>
       <el-table-column prop="operate" label="操作">
         <template slot-scope="scope">
@@ -78,7 +54,7 @@
           >
           <el-popconfirm
             title="确定删除吗？"
-            @confirm="doDel(scope.row.stationId)"
+            @confirm="doDel(scope.row.postmanId)"
             style="margin-left: 5px"
           >
             <el-button slot="reference" size="small" type="danger"
@@ -111,7 +87,7 @@
             <el-input v-model="form.account"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="站点名" prop="realName">
+        <el-form-item label="名字" prop="realName">
           <el-col :span="20">
             <el-input v-model="form.realName"></el-input>
           </el-col>
@@ -121,19 +97,27 @@
             <el-input v-model="form.password"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="省市县" prop="address" >
+        <el-form-item label="所属快递站点" prop="stationId">
           <el-col :span="20">
-            <v-distpicker
-              @province="onChangeProvince"
-              @city="onChangeCity"
-              @area="onChangeArea"
-            ></v-distpicker>
+            <el-select
+              v-model="form.stationSendId"
+              placeholder="快递站点"
+              :disabled="stationDisabled"
+            >
+              <el-option
+                v-for="(item, index) in stationList"
+                :key="index"
+                :label="item.realName"
+                :value="item.stationId"
+              ></el-option>
+            </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label="详细地址" prop="detail">
-          <el-col :span="20">
-            <el-input v-model="form.detail"></el-input>
-          </el-col>
+        <el-form-item label="性别">
+          <el-radio-group v-model.number="form.sex">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="0">女</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-col :span="20">
@@ -142,7 +126,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button @click="quite">取 消</el-button>
         <el-button type="primary" @click="save">确 定</el-button>
       </span>
     </el-dialog>
@@ -150,79 +134,75 @@
 </template>
 
 <script>
-import VDistpicker from "v-distpicker";
 export default {
-  name: "StationManage",
-  components: { VDistpicker },
+  name: "WorkerManage",
   data() {
     return {
-      // stationList: [
-      //   {
-      //     stationId: 1,
-      //     account: "P2022001",
-      //     realName: "福州大学服务站",
-      //     detail: "福州大学生活区",
-      //     phone: "17767639938",
-      //     province: "福建省",
-      //     city: "福州市",
-      //     county: "闽侯县",
-      //   },
-      //   {
-      //     stationId: 2,
-      //     account: "P2022002",
-      //     realName: "厦门大学服务站",
-      //     detail: "福州大学生活区",
-      //     phone: "17767639938",
-      //     province: "福建省",
-      //     city: "厦门市",
-      //     county: "集美区",
-      //   },
-      //   {
-      //     stationId: 3,
-      //     account: "P2022003",
-      //     realName: "北京大学服务站",
-      //     detail: "福州大学生活区",
-      //     phone: "17767639938",
-      //     province: "福建省",
-      //     city: "福州市",
-      //     county: "鼓楼区",
-      //   },
-      //   {
-      //     stationId: 4,
-      //     account: "P2022004",
-      //     realName: "清华大学服务站",
-      //     detail: "福州大学生活区",
-      //     phone: "17767639938",
-      //     province: "福建省",
-      //     city: "福州市",
-      //     county: "金山区",
-      //   },
-      // ],
+      stationDisabled: true,
+      stationInfo: "",
       stationList: [],
+      //   postmanList: [
+      //     {
+      //       postmanId: 1,
+      //       account: "P2022001",
+      //       realName: "刘德华",
+      //       sex: 1,
+      //       phone: "17767639938",
+      //     },
+      //     {
+      //       postmanId: 2,
+      //       account: "P2022002",
+      //       realName: "郭富城",
+      //       sex: 0,
+      //       phone: "17767639938",
+      //     },
+      //     {
+      //       postmanId: 3,
+      //       account: "P2022003",
+      //       realName: "黎明",
+      //       sex: 1,
+      //       phone: "17767639938",
+      //     },
+      //     {
+      //       postmanId: 4,
+      //       account: "P2022004",
+      //       realName: "张学友",
+      //       sex: 0,
+      //       phone: "17767639938",
+      //     },
+      //   ],
+      postmanList: [],
       account: "",
       realName: "",
       recPerPage: 5,
       page: 1,
       total: 0,
+      sex: "",
+      sexs: [
+        {
+          value: 1,
+          label: "男",
+        },
+        {
+          value: 0,
+          label: "女",
+        },
+      ],
       centerDialogVisible: false,
       form: {
         account: "",
         realName: "",
         password: "",
+        stationId: "",
         phone: "",
-        province: "",
-        city: "",
-        county: "",
-        detail: "",
+        sex: 1,
       },
       rules: {
         account: [
           { required: true, message: "请输入账号", trigger: "blur" },
-          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        //   { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
         ],
-        realName: [
-          { required: true, message: "请输入站点名字", trigger: "blur" },
-        ],
+        realName: [{ required: true, message: "请输入名字", trigger: "blur" }],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
           { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
@@ -242,9 +222,9 @@ export default {
     resetForm() {
       this.$refs.form.resetFields();
     },
-    async doDel(stationId) {
-      console.log(stationId);
-      let result = await this.$API.adminAPI.deletestation(stationId);
+    async doDel(postmanId) {
+      console.log(postmanId);
+      let result = await this.$API.adminAPI.deletepostman(postmanId);
       if (result.data.code == "200") {
         this.getAllList();
       } else {
@@ -255,28 +235,29 @@ export default {
       }
     },
     mod(row) {
+      console.log(row);
       this.centerDialogVisible = true;
+      this.stationDisabled = true;
       this.$nextTick(() => {
         //赋值到表单
-        this.form.stationId = row.stationId;
+        this.form.postmanId = row.postmanId;
         this.form.account = row.account;
         this.form.realName = row.realName;
         this.form.password = row.password;
-        this.form.detail = row.detail;
-        this.form.province = row.province;
-        this.form.city = row.city;
-        this.form.county = row.county;
+        this.form.stationId = row.stationId;
+        this.form.sex = row.sex;
         this.form.phone = row.phone;
       });
     },
-    add() {
+    async add() {
+      this.stationDisabled = false;
       this.centerDialogVisible = true;
       this.$nextTick(() => {
         this.resetForm();
       });
     },
     async doSave() {
-      let result = await this.$API.adminAPI.addstation(this.form);
+      let result = await this.$API.adminAPI.addpostman(this.form);
       if (result.data.code == "200") {
         this.$message({
           type: "success",
@@ -293,7 +274,7 @@ export default {
       }
     },
     async doMod() {
-      let result = await this.$API.adminAPI.updatestation(this.form);
+      let result = await this.$API.adminAPI.updatepostman(this.form);
       if (result.data.code == "200") {
         this.$message({
           type: "success",
@@ -310,9 +291,10 @@ export default {
       }
     },
     save() {
+      this.stationDisabled = true;
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.form.stationId) {
+          if (this.form.postmanId) {
             this.doMod();
           } else {
             this.doSave();
@@ -344,15 +326,26 @@ export default {
       this.getAllList();
     },
     async getAllList() {
-      let result = await this.$API.adminAPI.stations({
-        account: this.account,
-        realName: this.realName,
-        recPerPage: this.recPerPage,
-        page: this.page,
-      });
+      let result = "";
+      if (JSON.parse(sessionStorage.getItem("info")).roleId == 0) {
+        result = await this.$API.adminAPI.postmans({
+          account: this.account,
+          realName: this.realName,
+          recPerPage: this.recPerPage,
+          page: this.page
+        });
+      } else {
+        result = await this.$API.stationAPI.postmans({
+          stationId: JSON.parse(sessionStorage.getItem("info")).object.stationId,
+          account: this.account,
+          realName: this.realName,
+          recPerPage: this.recPerPage,
+          page: this.page
+        });
+      }
       if (result.data.code == "200") {
         console.log(result);
-        this.stationList = result.data.data;
+        this.postmanList = result.data.data;
         // this.page = result.data.pager.page;
         // this.recPerPage = result.data.pager.recPerPage;
         this.total = result.data.pager.recTotal;
@@ -363,21 +356,41 @@ export default {
         });
       }
     },
-    onChangeProvince(province) {
-      this.form.province = province.value;
-      this.form.city = "";
-      this.form.county = "";
-    },
-    onChangeCity(city) {
-      this.form.city = city.value;
-      this.form.county = "";
-    },
-    onChangeArea(county) {
-      this.form.county = county.value;
+    quite() {
+      this.centerDialogVisible = false;
+      this.stationDisabled = false;
     },
   },
-  beforeMount() {
-    this.getAllList();
+  async beforeMount() {
+    this.getAllList()
+    if (JSON.parse(sessionStorage.getItem("info")).roleId == 2) {
+      let result = await this.$API.adminAPI.station(
+        JSON.parse(sessionStorage.getItem("info")).object.stationId
+      );
+      if (result.data.code == "200") {
+        this.stationInfo = result.data.data;
+      } else {
+        this.$message({
+          typeof: "danger",
+          message: result.data.message,
+        });
+      }
+    }
+    let result = await this.$API.adminAPI.stations({
+        account: "",
+        realName: "",
+        page: 1,
+        recPerPage: 100,
+      });
+      if (result.data.code == "200") {
+        console.log(result);
+        this.stationList = result.data.data;
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
   },
 };
 </script>

@@ -76,26 +76,26 @@ export default {
       loginForm: {
         account: "A2022002",
         password: "123456",
-        roleId: 0,
+        roleId: 4,
       },
       roles: [
         {
-          roleId: 0,
-          roleName: "超级管理员",
+          roleId: 1,
+          roleName: "用户",
         },
         {
           // 原来是快递站
-          roleId: 1,
+          roleId: 2,
           roleName: "公司", 
         },
         {
           // 原来是快递员
-          roleId: 2,
+          roleId: 3,
           roleName: "工人",
         },
         {
-          roleId: 3,
-          roleName: "用户",
+          roleId: 4,
+          roleName: "超级管理员",
         },
       ],
       rules: {

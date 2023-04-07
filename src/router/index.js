@@ -48,31 +48,31 @@ const routes = [
                 component: () => import('../components/user/UserManage.vue')
             },
             {
-                path: 'package',
-                name: 'package',
+                path: 'order',
+                name: 'order',
                 meta: {
-                    title: '快递管理',
+                    title: '订单管理',
                     isAnth: true
                 },
-                component: () => import('../components/package/PackageManage.vue')
+                component: () => import('../components/order/OrderManage.vue')
             },
             {
-                path: 'station',
-                name: 'station',
+                path: 'company',
+                name: 'company',
                 meta: {
-                    title: '网点管理',
+                    title: '公司管理',
                     isAnth: true
                 },
-                component: () => import('../components/station/StationManage.vue')
+                component: () => import('../components/company/CompanyManage.vue')
             },
             {
-                path: 'postman',
-                name: 'postman',
+                path: 'worker',
+                name: 'worer',
                 meta: {
-                    title: '快递员管理',
+                    title: '工人管理',
                     isAnth: true
                 },
-                component: () => import('../components/postman/PostmanManage.vue')
+                component: () => import('../components/worker/WorkerManage.vue')
             },
             {
                 path: 'send',
@@ -108,7 +108,7 @@ VueRouter.prototype.replace = function replace(location) {
     return originalReplace.call(this, location).catch(err => err)
 }
 
-
+// 这里其实就是设置了每个用户所拥有的侧边栏数目
 
 router.beforeEach((to, from, next) => {
     //console.log(to,from,next)

@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+
+//站点信息该查
 export const stationsincertainarea = (stationsincertainareaForm) => axios({
   url: `/api/stationsincertainarea`,
   method: 'post',
@@ -12,6 +14,7 @@ export const stationsincertainarea = (stationsincertainareaForm) => axios({
   }
 });
 
+// 收件
 export const sendpackage = (sendpackageForm) => axios({
   url: `api/station/sendpackage`,
   method: 'post',
@@ -21,6 +24,7 @@ export const sendpackage = (sendpackageForm) => axios({
   }
 });
 
+// 指派快递员
 export const choosepostman = (choosepostmanForm) => axios({
   url: `api/station/choosepostman`,
   method: 'post',
@@ -30,6 +34,7 @@ export const choosepostman = (choosepostmanForm) => axios({
   }
 });
 
+// 派件列表
 export const packagestosend = (packagestosendForm) => axios({
   url: `api/station/packagestosend`,
   method: 'post',
@@ -42,6 +47,7 @@ export const packagestosend = (packagestosendForm) => axios({
   }
 });
 
+// 收件列表
 export const packagestoreceive = (packagestoreceiveForm) => axios({
   url: `api/station/packagestoreceive`,
   method: 'post',
@@ -54,6 +60,9 @@ export const packagestoreceive = (packagestoreceiveForm) => axios({
   }
 });
 
+
+
+// 查询邮递员信息列表
 export const postmans = (postmansForm) => axios({
   url: `/api/station/postmans`,
   method: 'post',
