@@ -1,15 +1,8 @@
-import * as loginAPI from './login.js'
-import * as adminAPI from './admin.js'
-import * as expressAPI from './express.js'
-import * as stationAPI from './station.js'
-import * as postmanAPI from './postman.js'
-import * as userAPI from './user.js'
+import * as systemAPI from './system.js'
+import * as orderAPI from './order.js'
+
 
 export default {
-    loginAPI,
-    adminAPI,
-    expressAPI,
-    stationAPI,
-    postmanAPI,
-    userAPI
+    systemAPI,
+    orderAPI,
 }

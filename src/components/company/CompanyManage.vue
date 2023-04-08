@@ -1,187 +1,503 @@
 <template>
-  <!-- 显示列表 -->
-  <el-main>
+  <div>
     <div style="margin-bottom: 5px">
-      <el-input v-model="search" size="mini" placeholder="输入关键字搜索" style="width: 200px" />
-      <el-button size="small" style="margin-left: 5px" @click="getAllList">查询</el-button>
-      <el-button size="small" style="margin-left: 5px" @click="add">新增</el-button>
+      <el-input v-model="companyNickname" placeholder="请输入账号" suffix-icon="el-icon-search" style="width: 200px"
+        @keyup.enter.native="getAllList"></el-input>
+      <el-input v-model="companyName" placeholder="请输入家政公司名" suffix-icon="el-icon-search" style="width: 200px"
+        @keyup.enter.native="getAllList"></el-input>
+      <el-button type="primary" style="margin-left: 5px" @click="getAllList">查询</el-button>
+      <el-button type="success" @click="resetParam">重置</el-button>
+
+      <el-button type="primary" style="margin-left: 30px" @click="add">新增</el-button>
     </div>
 
-    <el-table :data="tableData" border max-height="250" :header-cell-style="{ background: '#f2f5fc', color: '#555555' }">
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="商品名称">
-              <span>{{ props.row.name }}</span>
-            </el-form-item>
-            <el-form-item label="所属店铺">
-              <span>{{ props.row.shop }}</span>
-            </el-form-item>
-            <el-form-item label="商品 ID">
-              <span>{{ props.row.id }}</span>
-            </el-form-item>
-            <el-form-item label="店铺 ID">
-              <span>{{ props.row.shopId }}</span>
-            </el-form-item>
-            <el-form-item label="商品分类">
-              <span>{{ props.row.category }}</span>
-            </el-form-item>
-            <el-form-item label="店铺地址">
-              <span>{{ props.row.address }}</span>
-            </el-form-item>
-            <el-form-item label="商品描述">
-              <span>{{ props.row.desc }}</span>
-            </el-form-item>
-          </el-form>
+    <el-table :data="companyList" :header-cell-style="{ background: '#f2f5fc', color: '#555555' }" border>
+      <el-table-column prop="companyId" label="ID" align="center" width="60">
+      </el-table-column>
+      <el-table-column prop="companyNickname" label="账号" align="center" width="100">
+      </el-table-column>
+      <el-table-column prop="companyName" label="家政公司名" align="center" width="180" fixed>
+      </el-table-column>
+      <el-table-column prop="companyPrice" label="服务费用" align="center" width="180">
+      </el-table-column>
+      <el-table-column prop="companyStatus" label="公司状态" align="center" width="180">
+        <template slot-scope="scope">
+          <el-tag :type="
+            scope.row.companyStatus == 0
+              ? 'primary'
+              : scope.row.companyStatus == 1
+                ? 'info'
+                : scope.row.companyStatus == 2
+                  ? 'warning'
+                  : 'success'
+          " disable-transitions>{{
+  scope.row.companyStatus == 0
+  ? "正常状态"
+  : scope.row.companyStatus == 1
+    ? "已下线"
+    : scope.row.companyStatus == 2
+      ? "已评价"
+      : "已送达"
+}}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="商品 ID" prop="id">
-      </el-table-column>
-      <el-table-column label="商品名称" prop="name">
-      </el-table-column>
-      <el-table-column label="描述" prop="desc">
-      </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column prop="companyCity" label="市" align="center" width="80">
         <template slot-scope="scope">
-          <el-button type="text" size="small">编辑</el-button>
-          <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small">
-            移除
-          </el-button>
+          <el-tag type="success" disable-transitions effect="plain">{{
+            scope.row.companyCity
+          }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="companyCounty" label="县" align="center" width="80">
+        <template slot-scope="scope">
+          <el-tag type="info" disable-transitions effect="plain">{{
+            scope.row.companyCounty
+          }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="companyCity" label="街道" align="center" width="80">
+        <template slot-scope="scope">
+          <el-tag type="" disable-transitions effect="plain">{{
+            scope.row.companyStreet
+          }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="companyDetail" label="详细地址" align="center" width="180">
+      </el-table-column>
+      <el-table-column prop="companyPhone" label="电话" align="center" width="100">
+      </el-table-column>
+      <el-table-column prop="operate" label="操作" fixed="right" width="150">
+        <template slot-scope="scope">
+          <el-button size="small" type="success" @click="mod(scope.row)">修改</el-button>
+          <el-popconfirm title="确定删除吗？" @confirm="doDel(scope.row.companyId)" style="margin-left: 5px">
+            <el-button slot="reference" size="small" type="danger">删除</el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
-    <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper" :total="total">
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page"
+      :page-sizes="[2, 3, 5, 10]" :page-size="recPerPage" layout="total, sizes, prev, pager, next, jumper" :total="total">
     </el-pagination>
 
-
-
-    <!-- 新增的弹出框 -->
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-      <el-form :model="form" label-width="80px">
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off" style="width: 200px"></el-input>
-
+    <el-dialog title="提示" :visible.sync="centerDialogVisible" width="30%" center>
+      <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+        <el-form-item label="账号" prop="companyNickname">
+          <el-col :span="20">
+            <el-input v-model="form.companyNickname"></el-input>
+          </el-col>
         </el-form-item>
-        <el-form-item label="活动区域" :label-width="formLabelWidth">
-            <el-select v-model="form.region" placeholder="请选择活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
+        <el-form-item label="家政公司名" prop="companyName">
+          <el-col :span="20">
+            <el-input v-model="form.companyName"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="密码" prop="companyPassword">
+          <el-col :span="20">
+            <el-input v-model="form.companyPassword"></el-input>
+          </el-col>
+        </el-form-item>
+
+        <el-form-item label="公司状态" prop="companyStatus">
+          <template>
+            <el-radio v-model="form.companyStatus" label=0>正常状态</el-radio>
+            <el-radio v-model="form.companyStatus" label=1>已经下线</el-radio>
+          </template>
+        </el-form-item>
+        <el-form-item label="服务费用" prop="companyPrice">
+          <el-col :span="20">
+            <el-input v-model="form.companyPrice"></el-input>
+          </el-col>
+        </el-form-item>
+#FIXME
+<!-- 这里会出现修改过后的默认值没有重置，新增会显示默认值 -->
+        <el-form-item label="市县街" >
+          <div class="demo-input-suffix">
+            <el-input placeholder="市" prop="companyCity" v-model="form.companyCity" style="width: 33.3%">
+            </el-input>
+            <el-input placeholder="县" prop="companyCounty" v-model="form.companyCounty" style="width: 33.3%">
+            </el-input>
+            <el-input placeholder="街" prop="companyStreet" v-model="form.companyStreet" style="width: 33.3%">
+            </el-input>
+          </div>
+        </el-form-item>
+        <!-- <el-form-item label="市县街" prop="address">
+          <el-col :span="20">
+            <v-distpicker @companyCity="onChangecompanyCity" @companyStreet="onChangecompanyStreet"
+              @area="onChangeArea"></v-distpicker>
+          </el-col>
+        </el-form-item> -->
+        <el-form-item label="详细地址" prop="companyDetail">
+          <el-col :span="20">
+            <el-input v-model="form.companyDetail"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="电话" prop="companyPhone">
+          <el-col :span="20">
+            <el-input v-model="form.companyPhone"></el-input>
+          </el-col>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="save">确 定</el-button>
+      </span>
     </el-dialog>
-
-  </el-main>
+  </div>
 </template>
 
 <script>
 import VDistpicker from "v-distpicker";
 export default {
   name: "CompanyManage",
+  // components: { VDistpicker },
   data() {
     return {
-      tableData: [{
-        id: '12987122',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }, {
-        id: '12987123',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }, {
-        id: '12987125',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }, {
-        id: '12987126',
-        name: '好滋好味鸡蛋仔',
-        category: '江浙小吃、小吃零食',
-        desc: '荷兰优质淡奶，奶香浓而不腻',
-        address: '上海市普陀区真北路',
-        shop: '王小虎夫妻店',
-        shopId: '10333'
-      }],
-      total: 50, // 总数据条数
-      pageSize: 10, // 每页显示的数据条数
-      currentPage: 1, // 当前页码
-      // dataList: [], // 数据列表
-      search: [],
-
-      // dialogTableVisible: false,
-      dialogFormVisible: false,
+      // companyList: [
+      //   {
+      //     companyId: 1,
+      //     companyNickname: "P2022001",
+      //     companyName: "福州大学服务站",
+      //     companyDetail: "福州大学生活区",
+      //     companyPhone: "17767639938",
+      //     companyStreet: "福建省",
+      //     companyCity: "福州市",
+      //     companyCounty: "闽侯县",
+      //   },
+      //   {
+      //     companyId: 2,
+      //     companyNickname: "P2022002",
+      //     companyName: "厦门大学服务站",
+      //     companyDetail: "福州大学生活区",
+      //     companyPhone: "17767639938",
+      //     companyStreet: "福建省",
+      //     companyCity: "厦门市",
+      //     companyCounty: "集美区",
+      //   },
+      //   {
+      //     companyId: 3,
+      //     companyNickname: "P2022003",
+      //     companyName: "北京大学服务站",
+      //     companyDetail: "福州大学生活区",
+      //     companyPhone: "17767639938",
+      //     companyStreet: "福建省",
+      //     companyCity: "福州市",
+      //     companyCounty: "鼓楼区",
+      //   },
+      //   {
+      //     companyId: 4,
+      //     companyNickname: "P2022004",
+      //     companyName: "清华大学服务站",
+      //     companyDetail: "福州大学生活区",
+      //     companyPhone: "17767639938",
+      //     companyStreet: "福建省",
+      //     companyCity: "福州市",
+      //     companyCounty: "金山区",
+      //   },
+      // ],
+      companyList: [],
+      companyNickname: "",
+      companyName: "",
+      recPerPage: 5,
+      page: 1,
+      total: 0,
+      centerDialogVisible: false,
       form: {
-        account: "",
-        name: "",
-        region: "",
-        stationId: "",
-        phone: "",
-        sex: 1,
+        companyNickname: "",
+        companyName: "",
+        companyPassword: "",
+        companyPhone: "",
+        companyStreet: "",
+        companyCity: "",
+        companyCounty: "",
+        companyDetail: "",
+        companyStatus: "",
+        companyPrice:""
+      },
+      rules: {
+        companyNickname: [
+          { required: true, message: "请输入账号", trigger: "blur" },
+          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        ],
+        companyName: [
+          { required: true, message: "请输入站点名字", trigger: "blur" },
+        ],
+        companyPassword: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        ],
+        companyPhone: [
+          { required: true, message: "手机号不能为空", trigger: "blur" },
+          {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur",
+          },
+        ],
+      },
+    };
+  },
+  methods: {
+    resetForm() {
+      this.$refs.form.resetFields();
+    },
+    async doDel(companyId) {
+      console.log(companyId);
+      // let result = await this.$API.systemAPI.deletecompany(companyId);
+      let result = {
+        data: {
+          code: '200',
+          message: '查询成功',
+          data: [
+            {
+              companyId: 1,
+              companyNickname: "P2022001",
+              companyName: "喜乐平安家政公司",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "福州市",
+              companyCounty: "闽侯县",
+              companyStreet: "甘蔗街",
+              companyStatus: 0,
+              companyPrice: 100.00
+            },
+            {
+              companyId: 2,
+              companyNickname: "P2022002",
+              companyName: "阳光月子家政",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "厦门市",
+              companyCounty: "集美区",
+              companyStreet: "甘蔗街",
+              companyStatus: 1,
+              companyPrice: 120.00
+            },
+            {
+              companyId: 3,
+              companyNickname: "P2022003",
+              companyName: "挚爱绿萝家政",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "福州市",
+              companyCounty: "鼓楼区",
+              companyStreet: "甘蔗街",
+              companyStatus: 1,
+              companyPrice: 130.00
+            },
+            {
+              companyId: 4,
+              companyNickname: "P2022004",
+              companyName: "福康诚信家政",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "福州市",
+              companyCounty: "金山区",
+              companyStreet: "甘蔗街",
+              companyStatus: 0,
+              companyPrice: 140.00
+            },
+
+          ]
+        }
+
       }
 
-
-    }
-  },
-  // computed: {
-  //   pageData() {
-  //     return this.tableData.slice(
-  //       (this.currentPage - 1) * this.pageSize,
-  //       this.currentPage * this.pageSize
-  //     )
-  //   },
-  // },
-
-  methods: {
-    // 删除方法
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-      // 在控制台输出删除元素的id
-      console.log(this.tableData[index]["id"])
-      alert(this.tableData[index]["id"])
+      if (result.data.code == "200") {
+        this.getAllList();
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    mod(row) {
+      this.centerDialogVisible = true;
+      this.$nextTick(() => {
+        //赋值到表单
+        this.form.companyId = row.companyId;
+        this.form.companyNickname = row.companyNickname;
+        this.form.companyName = row.companyName;
+        this.form.companyPassword = row.companyPassword;
+        this.form.companyDetail = row.companyDetail;
+        this.form.companyStreet = row.companyStreet;
+        this.form.companyCity = row.companyCity;
+        this.form.companyCounty = row.companyCounty;
+        this.form.companyPhone = row.companyPhone;
+        this.form.companyStatus = row.companyStatus;
+        this.form.companyPrice = row.companyPrice;
+      });
     },
     add() {
-      this.dialogTableVisible = true;
-      this.dialogFormVisible = true
-    }
+      this.centerDialogVisible = true;
+      this.$nextTick(() => {
+        this.resetForm();
+      });
+    },
+    async doSave() {
+      let result = await this.$API.systemAPI.addcompany(this.form);
+      if (result.data.code == "200") {
+        this.$message({
+          type: "success",
+          message: result.data.message,
+        });
+        this.centerDialogVisible = false;
+        this.getAllList();
+        this.resetForm();
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    async doMod() {
+      let result = await this.$API.systemAPI.updatecompanywithstatus(this.form);
+      if (result.data.code == "200") {
+        this.$message({
+          type: "success",
+          message: result.data.message,
+        });
+        this.centerDialogVisible = false;
+        this.getAllList();
+        this.resetForm();
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    save() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          if (this.form.companyId) {
+            this.doMod();
+          } else {
+            this.doSave();
+          }
+        } else {
+          this.$message({
+            type: "warning",
+            message: "请检查数据是否填写规范",
+          });
+          return false;
+        }
+      });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.page = 1;
+      this.recPerPage = val;
+      this.getAllList();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getAllList();
+    },
 
-  }
+    resetParam() {
+      this.companyNickname = "";
+      this.companyName = "";
+      this.getAllList();
+    },
+    async getAllList() {
+      // let result = await this.$API.systemAPI.stations({
+      //   companyNickname: this.companyNickname,
+      //   companyName: this.companyName,
+      //   recPerPage: this.recPerPage,
+      //   page: this.page,
+      // });
+      let result = {
+        data: {
+          code: '200',
+          message: '查询成功',
+          data: [
+            {
+              companyId: 1,
+              companyNickname: "P2022001",
+              companyName: "喜乐平安家政公司",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "福州市",
+              companyCounty: "闽侯县",
+              companyStreet: "甘蔗街",
+              companyStatus: 0,
+              companyPrice: 100.00
+            },
+            {
+              companyId: 2,
+              companyNickname: "P2022002",
+              companyName: "阳光月子家政",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "厦门市",
+              companyCounty: "集美区",
+              companyStreet: "甘蔗街",
+              companyStatus: 1,
+              companyPrice: 120.00
+            },
+            {
+              companyId: 3,
+              companyNickname: "P2022003",
+              companyName: "挚爱绿萝家政",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "福州市",
+              companyCounty: "鼓楼区",
+              companyStreet: "甘蔗街",
+              companyStatus: 1,
+              companyPrice: 130.00
+            },
+            {
+              companyId: 4,
+              companyNickname: "P2022004",
+              companyName: "福康诚信家政",
+              companyDetail: "福州大学生活区",
+              companyPhone: "17767639938",
+              companyCity: "福州市",
+              companyCounty: "金山区",
+              companyStreet: "甘蔗街",
+              companyStatus: 0,
+              companyPrice: 140.00
+            },
 
-}
+          ]
+        }
 
-
-
+      }
+      if (result.data.code == "200") {
+        console.log(result);
+        this.companyList = result.data.data;
+        // this.page = result.data.pager.page;
+        // this.recPerPage = result.data.pager.recPerPage;
+        this.total = result.data.pager.recTotal;
+      } else {
+        this.$message({
+          type: "error",
+          message: result.data.message,
+        });
+      }
+    },
+    onChangecompanyStreet(companyStreet) {
+      this.form.companyStreet = companyStreet.value;
+      this.form.companyCity = "";
+      this.form.companyCounty = "";
+    },
+    onChangecompanyCity(companyCity) {
+      this.form.companyCity = companyCity.value;
+      this.form.companyCounty = "";
+    },
+    onChangeCounty(companyCounty) {
+      this.form.companyCounty = companyCounty.value;
+    },
+  },
+  beforeMount() {
+    this.getAllList();
+  },
+};
 </script>
 
-<style scoped>
-.demo-table-expand {
-  font-size: 0;
-}
-
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
-}
-</style>
+<style ></style>

@@ -29,7 +29,7 @@ export default {
         },
         {
           menuClick: "worker",
-          menuName: "工人管理",
+          menuName: "家政人员管理",
           menuIcon: "el-icon-s-custom",
           auth: [2, 4],
         },

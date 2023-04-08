@@ -1,11 +1,11 @@
 <template>
   <div
     style="
-      text-align: center;
-      background-color: #f1f1f3;
-      height: 100%;
-      padding: 0px;
-      margin: 0px;
+      text-align: center,
+      background-color: #f1f1,
+      height: 100%,
+      padding: 0,
+      margin: 0px
     "
   >
     <h1 style="font-size: 50px">{{ user.object.account + "，欢迎使用！" }}</h1>
@@ -15,17 +15,22 @@
           <i class="el-icon-s-custom"></i>
           账号
         </template>
-        {{ user.object.account }}
+        {{ user.object.nickname }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
-          <i class="el-icon-mobile-phone"></i>
+          <i class="el-icon-phone"></i>
           电话
         </template>
         {{ user.object.phone }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
+          <i class="el-icon-user"></i>
+          真实姓名
+        </template>
+        {{ user.object.name }}
+        <!-- <template slot="label">
           <i class="el-icon-location-outline"></i>
           性别
         </template>
@@ -34,7 +39,7 @@
           disable-transitions
           ><i :class="user.object.sex == 1 ? 'el-icon-male' : 'el-icon-female'"></i
           >{{ user.object.sex == 1 ? "男" : "女" }}</el-tag
-        >
+        > -->
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
@@ -42,13 +47,13 @@
           角色
         </template>
         <el-tag type="success" disable-transitions>{{
-          user.roleId == 0
-            ? "超级管理员"
-            : user.roleId == 1
-            ? "快递站点"
+          user.roleId == 1
+            ? "用户"
             : user.roleId == 2
-            ? "快递员"
-            : "用户"
+            ? "公司"
+            : user.roleId == 3
+            ? "家政人员"
+            : "超级管理员"
         }}</el-tag>
       </el-descriptions-item>
     </el-descriptions>
