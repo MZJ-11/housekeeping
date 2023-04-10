@@ -1,245 +1,226 @@
 <template>
   <div>
-    <el-form
-      ref="sendForm"
-      :model="sendForm"
-      label-width="180px"
-      class="sendForm"
+    <div style="margin-bottom: 5px">
+      <el-input
+          v-model="companyName"
+          placeholder="公司名称"
+          suffix-icon="el-icon-search"
+          style="width: 200px"
+          @keyup.enter.native="getAllList"
+      ></el-input>
+      <el-input
+          v-model="lowPrice"
+          placeholder="最低价格"
+          suffix-icon="el-icon-search"
+          style="width: 200px"
+          @keyup.enter.native="getAllList"
+      ></el-input>
+      <el-input
+          v-model="highPrice"
+          placeholder="最高价格"
+          suffix-icon="el-icon-search"
+          style="width: 200px"
+          @keyup.enter.native="getAllList"
+      ></el-input>
+      <el-button type="primary" style="margin-left: 5px" @click="getAllList"
+      >查询</el-button
+      >
+      <el-button type="success" @click="resetParam">重置</el-button>
+
+    </div>
+
+    <el-table
+        :data="companyList"
+        :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
+        border
     >
-      <el-form-item label="寄件人信息:" size="middle">
-        <el-row :gutter="10">
-          <el-col :span="5">
-            <el-input
-              v-model="sendForm.nameSend"
-              placeholder="请输入寄件人的名字"
-            ></el-input>
-          </el-col>
-          <el-col :span="5">
-            <el-input
-              v-model="sendForm.phoneSend"
-              placeholder="请输入寄件人的电话号码"
-            ></el-input>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="10">
-            <v-distpicker
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="公司昵称">
+              <span>{{ props.row.company_nickname }}</span>
+            </el-form-item>
+            <el-form-item label="公司电话">
+              <span>{{ props.row.company_phone }}</span>
+            </el-form-item>
+            <el-form-item label="省">
+              <span>{{ props.row.company_city }}</span>
+            </el-form-item>
+            <el-form-item label="市">
+              <span>{{ props.row.company_county }}</span>
+            </el-form-item>
+            <el-form-item label="区">
+              <span>{{ props.row.company_street }}</span>
+            </el-form-item>
+            <el-form-item label="具体地址">
+              <span>{{ props.row.company_detail }}</span>
+            </el-form-item>
+            <el-form-item label="公司名称">
+              <span>{{ props.row.company_name }}</span>
+            </el-form-item>
+            <el-form-item label="价格">
+              <span>{{ props.row.company_price }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column prop="company_nickname" label="公司昵称" align="center" width="60"> </el-table-column>
+      <el-table-column prop="company_phone" label="公司电话" align="center" width="150"></el-table-column>
+      <el-table-column prop="company_city" label="省" align="center" width="150"></el-table-column>
+      <el-table-column prop="company_county" label="市" align="center" width="180"> </el-table-column>
+      <el-table-column prop="company_street" label="区" align="center" width="180"> </el-table-column>
+      <el-table-column prop="company_detail" label="具体地址" align="center" width="180">
+        <template slot-scope="scope">
+          <el-tag type="success" disable-transitions effect="plain">{{
+              scope.row.company_detail
+            }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="company_price" label="价格" align="center" width="180"> </el-table-column>
+      <el-table-column prop="operate" label="操作">
+        <template slot-scope="scope">
+                    <el-button size="small" type="primary" @click="add(scope.row)"
+                    >下单</el-button
+                    >
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-dialog title="下单" :visible.sync="centerDialogVisible" width="30%" center>
+      <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+        <el-form-item label="姓名">
+          <el-input v-model="form.userNickname" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="form.phoneSend" placeholder="请输入电话"></el-input>
+        </el-form-item>
+        <el-form-item label="用户住址">
+          <v-distpicker
               @province="onChangeProvinceSend"
               @city="onChangeCitySend"
               @area="onChangeAreaSend"
-            ></v-distpicker>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="10">
-            <el-input
-              v-model="sendForm.detailSend"
-              placeholder="请输入收件人的详细地址"
-            ></el-input>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item label="收件人信息:" size="middle">
-        <el-row :gutter="10">
-          <el-col :span="5">
-            <el-input
-              v-model="sendForm.nameReceive"
-              placeholder="请输入收件人的名字"
-            ></el-input>
-          </el-col>
-          <el-col :span="5">
-            <el-input
-              v-model="sendForm.phoneReceive"
-              placeholder="请输入收件人的电话号码"
-            ></el-input>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="10">
-            <v-distpicker
-              @province="onChangeProvinceReceive"
-              @city="onChangeCityReceive"
-              @area="onChangeAreaReceive"
-            ></v-distpicker>
-          </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="10">
-            <el-input
-              v-model="sendForm.detailReceive"
-              placeholder="请输入收件人的详细地址"
-            ></el-input>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-row :gutter="10">
-        <el-col :span="6">
-          <el-form-item label="快递站点：" size="middle" prop="stationSendId">
-            <el-select v-model="sendForm.stationSendId" placeholder="寄件站点">
-              <el-option
-                v-for="(item, index) in stationList"
-                :key="index"
-                :label="item.realName"
-                :value="item.stationId"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="物品类型：" size="middle" prop="type">
-            <el-select v-model="sendForm.type" placeholder="物品类型">
-              <el-option
-                v-for="(item, index) in typeList"
-                :key="index"
-                :value="item"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-form-item label="物品重量：" size="middle" prop="weight">
-        <el-input-number
-          v-model.number="sendForm.weight"
-          :precision="1"
-          :step="0.1"
-          :max="100"
-          @change="computePrice"
-        ></el-input-number>
-        <span>&nbsp;&nbsp;单位：（KG）</span>
-      </el-form-item>
-      <el-form-item label="备注：" prop="remark">
-        <el-row :gutter="10">
-          <el-col :span="10">
-            <el-input
-              type="textarea"
-              v-model="sendForm.remark"
-              placeholder="补充..."
-            ></el-input>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item>
-        <span
-          >预估金额<b style="color: red">{{ sendForm.price }}</b
-          >元&nbsp;&nbsp;</span
-        >
-        <el-button type="primary" @click="onSubmit('sendForm')" size="middle"
-          >立即下单</el-button
-        >
-        <el-button type="info" size="middle" @click="reset('sendForm')"
-          >重置</el-button
-        >
-      </el-form-item>
-    </el-form>
+          ></v-distpicker>
+        </el-form-item>
+        <el-form-item label="详细地址">
+          <el-input v-model="form.addressDetail" placeholder="请输入详细地址"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+      <el-button @click="centerDialogVisible = false">取消</el-button>
+      <el-button type="primary" @click="save">确认</el-button>
+    </span>
+    </el-dialog>
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="page"
+        :page-sizes="[2,3,5,10]"
+        :page-size="recPerPage"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+    >
+    </el-pagination>
   </div>
 </template>
 
 <script>
-import VDistpicker from "v-distpicker";
+import VDistpicker from 'v-distpicker'
 export default {
+  components: {
+    VDistpicker,
+  },
   name: "Send",
-  components: { VDistpicker },
   data() {
     return {
-      sendForm: {
-        nameSend: "",
-        phoneSend: "",
-        provinceSend: "",
-        citySend: "",
-        countySend: "",
-        detailSend: "",
-        nameReceive: "",
-        phoneReceive: "",
-        provinceReceive: "",
-        cityReceive: "",
-        countyReceive: "",
-        detailReceive: "",
-        stationSendId: "",
-        stationReceiveId: "",
-        type: "",
-        weight: 1.0,
-        price: 12,
-        remark: "",
-        state: 0,
-        userId: JSON.parse(sessionStorage.getItem("info")).object.userId,
+      companyList: [ ],
+      city:'',
+      county:'',
+      street:'',
+      lowPrice:'',
+      highPrice:'',
+      companyName:'',
+      companyId:'',
+      orderPrice:'',
+      recPerPage: 5,
+      page: 1,
+      total: 0,
+      userId: JSON.parse(sessionStorage.getItem("info")).object.userId,
+      centerDialogVisible: false,
+      form: {
+        userNickname: '',
+        phoneSend: '',
+        addressCity: '',
+        addressCounty: '',
+        addressStreet: '',
+        addressDetail: ''
       },
-      // stationList: [
-      //   {
-      //     stationId: 1,
-      //     account: "",
-      //     password: "",
-      //     realName: "福州大学服务站",
-      //     phone: "",
-      //     detail: "",
-      //     province: "",
-      //     city: "",
-      //     county: "",
-      //   },
-      //   {
-      //     stationId: 2,
-      //     account: "",
-      //     password: "",
-      //     realName: "厦门大学服务站",
-      //     phone: "",
-      //     detail: "",
-      //     province: "",
-      //     city: "",
-      //     county: "",
-      //   },
-      // ],
-      stationList: [],
-      typeList: ["日用品", "食品", "文件", "衣物", "数码产品", "其他"],
+      rules: {
+        userNickname: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        phoneSend: [{ required: true, message: '请输入电话', trigger: 'blur' },],
+        addressCity: [{ required: true, message: '请选择所在省份', trigger: 'change' }],
+        addressCounty: [{ required: true, message: '请选择所在城市', trigger: 'change' }],
+        addressStreet: [{ required: true, message: '请选择所在区县', trigger: 'change' }],
+        addressDetail: [{ required: true, message: '请输入详细地址', trigger: 'blur' }],
+      },
     };
   },
   methods: {
-    onSubmit() {
-      console.log(this.sendForm);
-      this.$confirm("信息全部填写完成了嘛^-^?", "提示", {
-        confirmButtonText: "确定", //确认按钮的文字显示
-        type: "warning",
-        center: true, //文字居中显示
-      })
-        .then(async () => {
-          let result = await this.$API.userAPI.addpackage(this.sendForm);
-          if (result.data.code == "200") {
-            console.log(result.data.data);
-            this.$message({
-              type: "success",
-              message: "下单成功，请耐心等待您的包裹送达",
-            });
-            this.$router.push("/index/package");
-          }
-        })
-        .catch(() => {
-          this.$message({
-            type: "warning",
-            message: "请确认好下单信息哦",
-          });
-        });
+    resetForm() {
+      this.$refs.form.resetFields();
     },
-    onChangeProvinceSend(province) {
-      this.sendForm.provinceSend = province.value;
-      this.sendForm.citySend = "";
-      this.sendForm.countySend = "";
-      this.sendForm.stationSendId = "";
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.page = 1;
+      this.recPerPage = val;
+      this.getAllList();
     },
-    onChangeCitySend(city) {
-      this.sendForm.citySend = city.value;
-      this.sendForm.countySend = "";
-      this.sendForm.stationSendId = "";
-      this.getStationList();
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getAllList();
     },
-    async onChangeAreaSend(county) {
-      this.sendForm.countySend = county.value;
-      let result = await this.$API.stationAPI.stationsincertainarea({
-        province: this.sendForm.provinceSend,
-        city: this.sendForm.citySend,
-        county: this.sendForm.countySend,
-        page: 1,
-        recPerPage: 100,
+    resetParam() {
+      this.companyName = "";
+      this.lowPrice = "";
+      this.highPrice = "";
+      this.getAllList();
+    },
+    onChangeProvinceSend(val) {
+      this.form.addressCity = val.value;
+    },
+    onChangeCitySend(val) {
+      this.form.addressCounty = val.value;
+    },
+    onChangeAreaSend(val) {
+      this.form.addressStreet = val.value;
+    },
+    add(row) {
+     // alert(row.company_id)
+      this.centerDialogVisible = true;
+      this.$nextTick(() => {
+        this.companyId = row.company_id;
+        this.orderPrice = row.company_price;
+        this.resetForm();
+      });
+    },
+    async save() {
+      let result = await this.$API.orderAPI.addorder({
+        userId: this.userId,
+        userNickname: this.form.userNickname,
+        companyId: this.companyId,
+        orderPrice: this.orderPrice,
+        addressCity: this.form.addressCity,
+        addressCounty: this.form.addressCounty,
+        addressStreet: this.form.addressStreet,
+        addressDetail: this.form.addressDetail,
       });
       if (result.data.code == "200") {
-        this.stationList = result.data.data;
+        this.$message({
+          type: "success",
+          message: result.data.message,
+        });
+        this.centerDialogVisible = false;
+        this.getAllList();
+        this.resetForm();
       } else {
         this.$message({
           type: "error",
@@ -247,101 +228,84 @@ export default {
         });
       }
     },
-    onChangeProvinceReceive(province) {
-      this.sendForm.provinceReceive = province.value;
-      this.sendForm.cityReceive = "";
-      this.sendForm.countyReceive = "";
-    },
-    onChangeCityReceive(city) {
-      this.sendForm.cityReceive = city.value;
-      this.sendForm.countyReceive = "";
-    },
-    async onChangeAreaReceive(county) {
-      this.sendForm.countyReceive = county.value;
-      this.sendForm.stationSendId = "";
-    },
-    computePrice() {
-      this.sendForm.price =
-        this.sendForm.weight <= 3 ? 12 : (this.sendForm.weight - 3) * 2 + 12;
-    },
-    reset(formName) {
-      // this.$refs[formName].resetFields();
-      console.log(formName);
-      this.sendForm = {
-        nameSend: "",
-        phoneSend: "",
-        provinceSend: "",
-        citySend: "",
-        countySend: "",
-        detailSend: "",
-        nameReceive: "",
-        phoneReceive: "",
-        provinceReceive: "",
-        cityReceive: "",
-        countyReceive: "",
-        detailReceive: "",
-        stationSendId: "",
-        stationReceiveId: "",
-        type: "",
-        weight: 1.0,
-        price: 12,
-        remark: "",
-        state: 0,
-        userId: JSON.parse(sessionStorage.getItem("info")).object.userId,
+    //获取公司信息
+    async getAllList() {
+      // let result = await this.$API.systemAPI.companys({
+      //   city:this.city,
+      //   county:this.county,
+      //   street:this.street,
+      //   lowPrice:this.lowPrice,
+      //   highPrice:this.highPrice,
+      //   companyName:this.companyName,
+      //   recPerPage: this.recPerPage,
+      //   page: this.page,
+      // })
+      let result = {
+        data:{
+          code:"200",
+          message:'查询成功',
+          data:[
+            {
+              company_id:"1",
+              company_nickname:"小当家",
+              company_password:"123435",
+              company_phone:"17302213225",
+              company_name:"福寿集团",
+              company_status:"0",
+              company_city:"福建省",
+              company_county:"三明市",
+              company_street:"三元区",
+              company_detail:"城关",
+              company_price:"1500"
+            },
+            {
+              company_id:"2",
+              company_nickname:"大当家",
+              company_password:"123435",
+              company_phone:"17302213225",
+              company_name:"福寿集团",
+              company_status:"0",
+              company_city:"天津市",
+              company_county:"天津市",
+              company_street:"北辰区",
+              company_detail:"河工大",
+              company_price:"2000"
+            },
+          ]
+        }
       };
-    },
-    async getStationList() {
-      let result = await this.$API.stationAPI.stationsincertainarea({
-        province: this.sendForm.provinceReceive,
-        city: this.sendForm.cityReceive,
-        county: this.sendForm.countyReceive,
-        page: 1,
-        recPerPage: 100,
-      });
       if (result.data.code == "200") {
-        this.stationList = result.data.data;
+       // console.log(result)
+        this.companyList = result.data.data;
+        this.total = result.data.pager.recTotal;
       } else {
+        alert("查询失败")
         this.$message({
           type: "error",
           message: result.data.message,
         });
       }
     },
+  },
+  beforeMount() {
+    this.getAllList();
   },
 };
 </script>
 
+<style scoped>
+</style>
 <style>
-.divwrap {
-  height: 400px;
-  overflow-y: auto;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+.demo-table-expand {
+  font-size: 0;
 }
-.divwrap >>> .distpicker-address-wrapper {
-  color: #999;
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
 }
-.divwrap >>> .address-header {
-  position: fixed;
-  bottom: 400px;
-  width: 100%;
-  background: #000;
-  color: #fff;
-}
-.divwrap >>> .address-header ul li {
-  flex-grow: 1;
-  text-align: center;
-}
-.divwrap >>> .address-header .active {
-  color: #fff;
-  border-bottom: #666 solid 8px;
-}
-.divwrap >>> .address-container .active {
-  color: #000;
-}
-.el-row {
-  margin-bottom: 10px;
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
 }
 </style>

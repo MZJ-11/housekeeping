@@ -2,126 +2,140 @@
   <div>
     <div style="margin-bottom: 5px">
       <el-input
-        v-model="account"
-        placeholder="请输入账号"
-        suffix-icon="el-icon-search"
-        style="width: 200px"
-        @keyup.enter.native="getAllList"
+          v-model="account"
+          placeholder="请输入账号"
+          suffix-icon="el-icon-search"
+          style="width: 200px"
+          @keyup.enter.native="getAllList"
       ></el-input>
       <el-input
-        v-model="realName"
-        placeholder="请输入姓名"
-        suffix-icon="el-icon-search"
-        style="width: 200px"
-        @keyup.enter.native="getAllList"
+          v-model="realName"
+          placeholder="请输入姓名"
+          suffix-icon="el-icon-search"
+          style="width: 200px"
+          @keyup.enter.native="getAllList"
       ></el-input>
       <el-button type="primary" style="margin-left: 5px" @click="getAllList"
-        >查询</el-button
+      >查询</el-button
       >
       <el-button type="success" @click="resetParam">重置</el-button>
-
       <el-button type="primary" style="margin-left: 30px" @click="add"
-        >新增</el-button
+      >新增</el-button
       >
     </div>
 
     <el-table
-      :data="postmanList"
-      :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
-      border
+        :data="workerList"
+        :header-cell-style="{ background: '#f2f5fc', color: '#555555' }"
+        border
     >
-      <el-table-column prop="postmanId" label="ID" align="center" width="60">
+      <el-table-column prop="workerId" label="ID" align="center" width="60">
       </el-table-column>
-      <el-table-column prop="account" label="账号" align="center" width="150">
+      <el-table-column prop="workerNickName" label="用户昵称" align="center" width="150">
       </el-table-column>
-      <el-table-column prop="realName" label="姓名" align="center" width="150">
+      <el-table-column prop="workerPassword" label="密码" align="center" width="150">
       </el-table-column>
-      <el-table-column prop="sex" label="性别" align="center" width="150">
+      <el-table-column prop="workerName" label="姓名" align="center" width="150">
+      </el-table-column>
+      <el-table-column prop="workerPhone" label="电话" align="center" width="180">
+      </el-table-column>
+      <el-table-column prop="workerStatus" label="状态" align="center" width="180">
         <template slot-scope="scope">
           <el-tag
-            :type="scope.row.sex == 1 ? 'primary' : 'success'"
-            disable-transitions
-            >{{ scope.row.sex == 1 ? "男" : "女" }}</el-tag
-          >
+              :type="
+                 scope.row.workerStatus == 0
+                ? 'suceess'
+                : scope.row.workerStatus == 1
+                ? 'danger'
+                : 'success'
+            "
+              disable-transitions
+          >{{
+              scope.row.workerStatus == 0
+                  ? "正常"
+                  : scope.row.workerStatus == 1
+                      ? "已离职"
+                          : "已送达"
+            }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="phone" label="电话" align="center" width="180">
-      </el-table-column>
+
       <el-table-column prop="operate" label="操作">
         <template slot-scope="scope">
           <el-button size="small" type="success" @click="mod(scope.row)"
-            >修改</el-button
+          >修改</el-button
           >
           <el-popconfirm
-            title="确定删除吗？"
-            @confirm="doDel(scope.row.postmanId)"
-            style="margin-left: 5px"
+              title="确定删除吗？"
+              @confirm="doDel(scope.row.workerId)"
+              style="margin-left: 5px"
           >
             <el-button slot="reference" size="small" type="danger"
-              >删除</el-button
+            >删除</el-button
             >
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="page"
-      :page-sizes="[2, 3, 5, 10]"
-      :page-size="recPerPage"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="page"
+        :page-sizes="[2, 3, 5, 10]"
+        :page-size="recPerPage"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
     >
     </el-pagination>
 
     <el-dialog
-      title="提示"
-      :visible.sync="centerDialogVisible"
-      width="30%"
-      center
+        title="提示"
+        :visible.sync="centerDialogVisible"
+        width="30%"
+        center
     >
       <el-form ref="form" :rules="rules" :model="form" label-width="80px">
-        <el-form-item label="账号" prop="account">
+            <el-form-item label="公司" size="middle" prop="stationSendId" v-show="info.roleId!=2">
+              <el-select v-model="companyList.companyId" placeholder="公司列表">
+                <el-option
+                    v-for="(item, index) in companyList"
+                    :key="index"
+                    :label="item.companyName"
+                    :value="item.companyId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+        <el-form-item label="昵称" prop="workerNickName">
           <el-col :span="20">
-            <el-input v-model="form.account"></el-input>
+            <el-input v-model="form.workerNickName"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="名字" prop="realName">
+        <el-form-item label="密码" prop="workerPassword">
           <el-col :span="20">
-            <el-input v-model="form.realName"></el-input>
+            <el-input v-model="form.workerPassword"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="真实姓名" prop="workerName">
           <el-col :span="20">
-            <el-input v-model="form.password"></el-input>
+            <el-input v-model="form.workerName"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="所属快递站点" prop="stationId">
+        <el-form-item label="电话" prop="workerPhone">
           <el-col :span="20">
-            <el-select
-              v-model="form.stationSendId"
-              placeholder="快递站点"
-              :disabled="stationDisabled"
-            >
+            <el-input v-model="form.workerPhone"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="状态" prop="workerStatus" v-if="showStatus">
+          <el-col :span="20">
+            <el-select v-model="this.form.workerStatus" placeholder="员工状态">
               <el-option
-                v-for="(item, index) in stationList"
-                :key="index"
-                :label="item.realName"
-                :value="item.stationId"
+                  v-for="(item, index) in status"
+                  :key="index"
+                  :label="item.workerStatus"
+                  :value="index"
               ></el-option>
             </el-select>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-radio-group v-model.number="form.sex">
-            <el-radio :label="1">男</el-radio>
-            <el-radio :label="0">女</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="电话" prop="phone">
-          <el-col :span="20">
-            <el-input v-model="form.phone"></el-input>
           </el-col>
         </el-form-item>
       </el-form>
@@ -139,76 +153,111 @@ export default {
   data() {
     return {
       stationDisabled: true,
-      stationInfo: "",
-      stationList: [],
-      //   postmanList: [
-      //     {
-      //       postmanId: 1,
-      //       account: "P2022001",
-      //       realName: "刘德华",
-      //       sex: 1,
-      //       phone: "17767639938",
-      //     },
-      //     {
-      //       postmanId: 2,
-      //       account: "P2022002",
-      //       realName: "郭富城",
-      //       sex: 0,
-      //       phone: "17767639938",
-      //     },
-      //     {
-      //       postmanId: 3,
-      //       account: "P2022003",
-      //       realName: "黎明",
-      //       sex: 1,
-      //       phone: "17767639938",
-      //     },
-      //     {
-      //       postmanId: 4,
-      //       account: "P2022004",
-      //       realName: "张学友",
-      //       sex: 0,
-      //       phone: "17767639938",
-      //     },
-      //   ],
-      postmanList: [],
+      showStatus:false,
+      // workerList: [
+      //   {
+      //     workerId: 1,
+      //     workerNickName: "No1",
+      //     workerPassword: "2112",
+      //     workerName: "王师傅",
+      //     workerPhone: "17767639938",
+      //     workerStatus: 0
+      //   },
+      //   {
+      //     workerId: 2,
+      //     workerNickName: "No2",
+      //     workerPassword: "2112",
+      //     workerName: "李师傅",
+      //     workerPhone: "17767639938",
+      //     workerStatus: 1
+      //   },
+      //   {
+      //     workerId: 3,
+      //     workerNickName: "No3",
+      //     workerPassword: "2112",
+      //     workerName: "徐师傅",
+      //     workerPhone: "13223238",
+      //     workerStatus: 2
+      //   },
+      // ],
+      // companyList:[
+      //   {
+      //   companyId:"1",
+      //   companyNickName:"No1",
+      //   companyPassword:"123456",
+      //   companyPhone:"1212133",
+      //   companyName:"澳门娱乐",
+      //   companyStatus:"0",
+      //   companyCity:"福州",
+      //   companyCounty:"中国",
+      //   companyStreet:"上街",
+      //   companyDetail:"福州大学",
+      //   companyPrice:"21"
+      //   },
+      //   {
+      //     companyId:"2",
+      //     companyNickName:"No2",
+      //     companyPassword:"123456",
+      //     companyPhone:"1212133",
+      //     companyName:"香港娱乐",
+      //     companyStatus:"0",
+      //     companyCity:"福州",
+      //     companyCounty:"中国",
+      //     companyStreet:"上街",
+      //     companyDetail:"福州大学",
+      //     companyPrice:"21"
+      //   },
+      //   {
+      //     companyId:"3",
+      //     companyNickName:"No3",
+      //     companyPassword:"123456",
+      //     companyPhone:"1212133",
+      //     companyName:"香蕉娱乐",
+      //     companyStatus:"2",
+      //     companyCity:"福州",
+      //     companyCounty:"中国",
+      //     companyStreet:"上街",
+      //     companyDetail:"福州大学",
+      //     companyPrice:"21"
+      //   },
+      // ],
+      workerList: [],
+      companyList:[],
+      userNickname: '',
+      userName: '',
+      userPhone: '',
+      userPassword: '',
       account: "",
       realName: "",
       recPerPage: 5,
       page: 1,
       total: 0,
-      sex: "",
-      sexs: [
-        {
-          value: 1,
-          label: "男",
-        },
-        {
-          value: 0,
-          label: "女",
-        },
+      info: {},
+      status:[
+        {workerStatus:"正常"},
+        {workerStatus:"已离职"}
       ],
       centerDialogVisible: false,
       form: {
-        account: "",
-        realName: "",
-        password: "",
-        stationId: "",
-        phone: "",
-        sex: 1,
+        workerId: "",
+        workerNickName: "",
+        workerName: "",
+        workerPhone: "",
+        workerPassword: "",
+        workerStatus:""
       },
       rules: {
-        account: [
-          { required: true, message: "请输入账号", trigger: "blur" },
-        //   { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        workerNickName: [
+          {required: true, message: "请输入昵称", trigger: "blur"},
+          //   { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
         ],
-        realName: [{ required: true, message: "请输入名字", trigger: "blur" }],
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        workerName: [{required: true, message: "请输入姓名", trigger: "blur"}],
+        workerPassword: [
+          {required: true, message: "请输入密码", trigger: "blur"},
+          {min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur"},
         ],
-        phone: [
-          { required: true, message: "手机号不能为空", trigger: "blur" },
+        workerPhone: [
+          {required: true, message: "手机号不能为空", trigger: "blur"},
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: "请输入正确的手机号码",
@@ -222,42 +271,52 @@ export default {
     resetForm() {
       this.$refs.form.resetFields();
     },
-    async doDel(postmanId) {
-      console.log(postmanId);
-      let result = await this.$API.adminAPI.deletepostman(postmanId);
+    handleCommand(command) {
+      this.$message('click on item ' + command);
+    },
+    //删除工人
+    async doDel(workerId) {
+      //console.log(workerId)
+      let result = await this.$API.systemAPI.deleteworker(workerId)
       if (result.data.code == "200") {
         this.getAllList();
       } else {
+        alert("delete fail")
         this.$message({
           type: "error",
           message: result.data.message,
         });
       }
     },
+    //将修改的行信息填入弹出框
     mod(row) {
-      console.log(row);
+      this.showStatus=true
+      //console.log(row);
       this.centerDialogVisible = true;
-      this.stationDisabled = true;
+      //this.stationDisabled = true;
       this.$nextTick(() => {
         //赋值到表单
-        this.form.postmanId = row.postmanId;
-        this.form.account = row.account;
-        this.form.realName = row.realName;
-        this.form.password = row.password;
-        this.form.stationId = row.stationId;
-        this.form.sex = row.sex;
-        this.form.phone = row.phone;
+        this.form.workerId = row.workerId
+        this.form.workerName = row.workerName
+        this.form.workerNickName = row.workerNickName
+        this.form.workerPhone = row.workerPhone
+        this.form.workerPassword = row.workerPassword
+        this.form.workerStatus=row.workerStatus
       });
     },
+    //点击新增按钮，显示弹框
     async add() {
-      this.stationDisabled = false;
+      this.showStatus=false
+      this.form.workerId="";
       this.centerDialogVisible = true;
       this.$nextTick(() => {
         this.resetForm();
       });
     },
-    async doSave() {
-      let result = await this.$API.adminAPI.addpostman(this.form);
+    async doMod() {
+      console.log("update")
+      //console.log(this.form.workerId)
+      let result = await this.$API.systemAPI.updateworkerwithstatus(this.form)
       if (result.data.code == "200") {
         this.$message({
           type: "success",
@@ -273,31 +332,62 @@ export default {
         });
       }
     },
-    async doMod() {
-      let result = await this.$API.adminAPI.updatepostman(this.form);
-      if (result.data.code == "200") {
-        this.$message({
-          type: "success",
-          message: result.data.message,
-        });
-        this.centerDialogVisible = false;
-        this.getAllList();
-        this.resetForm();
-      } else {
-        this.$message({
-          type: "error",
-          message: result.data.message,
-        });
+    async doAdd() {
+      console.log("add")
+      console.log(this.form.workerId)
+      if(this.info.roleId==2){
+        let result=await this.$API.systemAPI.addworker({
+          companyId: this.info.companyId,
+          workerNickname: this.form.workerNickName,
+          workerName: this.form.workerName,
+          workerPhone: this.form.workerPhone,
+          workerPassword: this.form.workerPassword,
+        })
+        if (result.data.code == "200") {
+          this.$message({
+            type: "success",
+            message: result.data.message,
+          });
+          this.centerDialogVisible = false;
+          this.getAllList();
+          this.resetForm();
+        } else {
+          this.$message({
+            type: "error",
+            message: result.data.message,
+          });
+        }
+      }
+      else{
+        let result=await this.$API.systemAPI.companyswithoutpage({
+          workerNickname:this.form.workerNickName,
+          workerName: this.form.workerName,
+          workerPhone: this.form.workerPhone,
+          workerPassword: this.form.workerPassword,
+        })
+        if (result.data.code == "200") {
+          this.$message({
+            type: "success",
+            message: result.data.message,
+          });
+          this.centerDialogVisible = false;
+          this.getAllList();
+          this.resetForm();
+        } else {
+          this.$message({
+            type: "error",
+            message: result.data.message,
+          });
+        }
       }
     },
     save() {
-      this.stationDisabled = true;
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (this.form.postmanId) {
+          if (this.form.workerId) {
             this.doMod();
           } else {
-            this.doSave();
+            this.doAdd();
           }
         } else {
           this.$message({
@@ -326,71 +416,103 @@ export default {
       this.getAllList();
     },
     async getAllList() {
-      let result = "";
-      if (JSON.parse(sessionStorage.getItem("info")).roleId == 0) {
-        result = await this.$API.adminAPI.postmans({
-          account: this.account,
-          realName: this.realName,
+      // let js=JSON.parse(sessionStorage.getItem("info")).roleId;
+      // console.log(js)
+      //roleID==2代表公司
+      if(this.info.roleId==2){
+        // let result={
+        //   others:"其他信息",
+        //   data:{
+        //     code: '200',
+        //     message: "查询成功",
+        //     data: [
+        //       {
+        //         workerId: 1,
+        //         workerNickName: "No1",
+        //         workerPassword: "2112",
+        //         workerName: "王师傅",
+        //         workerPhone: "17767639938",
+        //         workerStatus: 0
+        //       },
+        //       {
+        //         workerId: 2,
+        //         workerNickName: "No2",
+        //         workerPassword: "2112",
+        //         workerName: "李师傅",
+        //         workerPhone: "17767639938",
+        //         workerStatus: 1
+        //       },
+        //       {
+        //         workerId: 3,
+        //         workerNickName: "No3",
+        //         workerPassword: "2112",
+        //         workerName: "徐师傅",
+        //         workerPhone: "13223238",
+        //         workerStatus: 1
+        //       },
+        //     ]
+        //   }
+        // }
+        let result=await this.$API.systemAPI.companyworkers({
+          companyId: this.info.roleId,
+          page: this.page,
           recPerPage: this.recPerPage,
-          page: this.page
-        });
-      } else {
-        result = await this.$API.stationAPI.postmans({
-          stationId: JSON.parse(sessionStorage.getItem("info")).object.stationId,
-          account: this.account,
-          realName: this.realName,
-          recPerPage: this.recPerPage,
-          page: this.page
-        });
+        })
+        if (result.data.code == "200") {
+          this.workerList= result.data.data;
+          this.total = result.data.pager.recTotal;
+        }
+        else{
+          alert("找不到该公司的任何员工")
+        }
       }
+      else{
+        //管理员需要选择公司
+        this.getAllCompanyList()
+        let result=await this.$API.systemAPI.workers({
+          page: this.page,
+          recPerPage: this.recPerPage,
+        })
+        if (result.data.code == "200") {
+          this.workerList = result.data.data;
+          this.total = result.data.pager.recTotal;
+        }
+        else{
+          alert("not found")
+        }
+      }
+    },
+    async getAllCompanyList(){
+      let js=JSON.parse(sessionStorage.getItem("info")).roleId;
+      console.log(js)
+      let result=await this.$API.systemAPI.companys({
+        page: this.page,
+        recPerpage: this.recPerpage,
+      })
       if (result.data.code == "200") {
-        console.log(result);
-        this.postmanList = result.data.data;
+        console.log(result)
+        this.companyList = result.data.data;
         // this.page = result.data.pager.page;
         // this.recPerPage = result.data.pager.recPerPage;
         this.total = result.data.pager.recTotal;
       } else {
+        alert("查询失败")
         this.$message({
           type: "error",
           message: result.data.message,
         });
       }
     },
+    //取消按钮
     quite() {
       this.centerDialogVisible = false;
       this.stationDisabled = false;
+      this.form.workerId="";
     },
   },
   async beforeMount() {
-    this.getAllList()
-    if (JSON.parse(sessionStorage.getItem("info")).roleId == 2) {
-      let result = await this.$API.adminAPI.station(
-        JSON.parse(sessionStorage.getItem("info")).object.stationId
-      );
-      if (result.data.code == "200") {
-        this.stationInfo = result.data.data;
-      } else {
-        this.$message({
-          typeof: "danger",
-          message: result.data.message,
-        });
-      }
-    }
-    let result = await this.$API.adminAPI.stations({
-        account: "",
-        realName: "",
-        page: 1,
-        recPerPage: 100,
-      });
-      if (result.data.code == "200") {
-        console.log(result);
-        this.stationList = result.data.data;
-      } else {
-        this.$message({
-          type: "error",
-          message: result.data.message,
-        });
-      }
+    this.info = JSON.parse(sessionStorage.getItem("info"));
+    this.getAllList();
   },
 };
 </script>

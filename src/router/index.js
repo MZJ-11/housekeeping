@@ -29,15 +29,15 @@ const routes = [
                 },
                 component: () => import('../components/Home')
             },
-            // {
-            //     path:'admin',
-            //     name:'admin',
-            //     meta:{
-            //         title:'管理员管理',
-            //         isAnth:true
-            //     },
-            //     component:()=>import('../components/admin/AdminManage.vue')
-            // },
+            {
+                path:'modinfo',
+                name:'modinfo',
+                meta:{
+                    title:'修改个人信息',
+                    isAnth:true
+                },
+                component:()=>import('../components/ModInfo')
+            },
             {
                 path: 'user',
                 name: 'user',

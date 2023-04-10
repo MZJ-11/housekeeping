@@ -43,7 +43,7 @@ export default {
       loginForm: {
         nickname: "A2022002",
         password: "123456",
-        roleId: 4,
+        roleId: 3,
       },
       roles: [
         {

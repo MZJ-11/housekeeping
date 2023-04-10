@@ -17,6 +17,7 @@
       ></span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item @click.native="toUser">个人中心</el-dropdown-item>
+        <el-dropdown-item @click.native="toMod">修改个人信息</el-dropdown-item>
         <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -39,6 +40,11 @@ export default {
       console.log("to_user");
 
       this.$router.push("/index/home");
+    },
+    toMod() {
+      console.log("to_modInfo");
+
+      this.$router.push("/index/modinfo");
     },
     logout() {
       this.$confirm("您确定要退出登录吗?", "提示", {
