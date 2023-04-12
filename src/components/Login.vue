@@ -43,7 +43,7 @@ export default {
       loginForm: {
         nickname: "A2022002",
         password: "123456",
-        roleId: 3,
+        roleId: 4,
       },
       roles: [
         {
@@ -79,6 +79,8 @@ export default {
       });
       if (result.data.code == "200") {
         console.log(result);
+        //这里获取并传递token保存到浏览器
+        sessionStorage.setItem("token", result.data.token); 
         this.loginForm.roleId = result.data.data.roleId;
       } else {
         this.$message({

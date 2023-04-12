@@ -1,14 +1,12 @@
 <template>
-  <div
-    style="
-      text-align: center,
-      background-color: #f1f1,
-      height: 100%,
-      padding: 0,
-      margin: 0px
-    "
-  >
-    <h1 style="font-size: 50px">{{ user.object.account + "，欢迎使用！" }}</h1>
+  <div style="
+  text-align: center;
+  /* background-color: #f1f1; */
+  height: 100%;
+  padding: 0;
+  margin: 0px
+">
+    <h1 style="font-size: 50px">{{ user.object.nickname + "，欢迎使用！" }}</h1>
     <el-descriptions title="个人中心" :column="2" size="40" border>
       <el-descriptions-item>
         <template slot="label">
@@ -30,16 +28,6 @@
           真实姓名
         </template>
         {{ user.object.name }}
-        <!-- <template slot="label">
-          <i class="el-icon-location-outline"></i>
-          性别
-        </template>
-        <el-tag
-          :type="user.object.sex == '1' ? 'primary' : 'danger'"
-          disable-transitions
-          ><i :class="user.object.sex == 1 ? 'el-icon-male' : 'el-icon-female'"></i
-          >{{ user.object.sex == 1 ? "男" : "女" }}</el-tag
-        > -->
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">

@@ -109,15 +109,14 @@
             <el-input v-model="form.companyPrice"></el-input>
           </el-col>
         </el-form-item>
-#FIXME
 <!-- 这里会出现修改过后的默认值没有重置，新增会显示默认值 -->
         <el-form-item label="市县街" >
           <div class="demo-input-suffix">
-            <el-input placeholder="市" prop="companyCity" v-model="form.companyCity" style="width: 33.3%">
+            <el-input placeholder="市"  v-model="form.companyCity" style="width: 33.3%">
             </el-input>
-            <el-input placeholder="县" prop="companyCounty" v-model="form.companyCounty" style="width: 33.3%">
+            <el-input placeholder="县"  v-model="form.companyCounty" style="width: 33.3%">
             </el-input>
-            <el-input placeholder="街" prop="companyStreet" v-model="form.companyStreet" style="width: 33.3%">
+            <el-input placeholder="街"  v-model="form.companyStreet" style="width: 33.3%">
             </el-input>
           </div>
         </el-form-item>
@@ -147,7 +146,7 @@
 </template>
 
 <script>
-import VDistpicker from "v-distpicker";
+// import VDistpicker from "v-distpicker";
 export default {
   name: "CompanyManage",
   // components: { VDistpicker },
@@ -240,6 +239,9 @@ export default {
   methods: {
     resetForm() {
       this.$refs.form.resetFields();
+      this.$refs.form.companyCity="";
+      this.$refs.form.companyCounty="";
+      this.$refs.form.companyStreet="";
     },
     async doDel(companyId) {
       console.log(companyId);
