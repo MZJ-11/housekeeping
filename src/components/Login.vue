@@ -12,12 +12,6 @@
             <el-input style="width: 200px" type="password" v-model="loginForm.password" show-password autocomplete="off"
               size="small" @keyup.enter.native="confirm('loginForm')"></el-input>
           </el-form-item>
-          <!-- <el-form-item label="身份">
-            <el-select v-model="loginForm.roleId" placeholder="请选择身份" style="width: 200px">
-              <el-option v-for="item in roles" :key="item.roleId" :label="item.roleName" :value="item.roleId">
-              </el-option>
-            </el-select>
-          </el-form-item> -->
           <el-form-item style="display: flex">
             <el-button type="primary" @click="confirm('loginForm')" :disabled="confirm_disabled">登 录</el-button>
             <el-button type="info" @click="reset" :disabled="confirm_disabled">重 置</el-button>
@@ -41,8 +35,8 @@ export default {
     return {
       confirm_disabled: false,
       loginForm: {
-        nickname: "A2022002",
-        password: "123456",
+        nickname: "",
+        password: "",
         roleId: 4,
       },
       roles: [
@@ -51,12 +45,10 @@ export default {
           roleName: "用户",
         },
         {
-          // 原来是快递站
           roleId: 2,
           roleName: "公司",
         },
         {
-          // 原来是快递员
           roleId: 3,
           roleName: "家政人员",
         },
@@ -77,15 +69,19 @@ export default {
         nickname: this.loginForm.nickname,
         password: this.loginForm.password
       });
+      console.log(result)
       if (result.data.code == "200") {
         console.log(result);
         //这里获取并传递token保存到浏览器
         sessionStorage.setItem("token", result.data.token); 
         this.loginForm.roleId = result.data.data.roleId;
+        this.$router.push("/index");
       } else {
+        this.$router.replace("/");
         this.$message({
           type: "error",
           message: result.data.message,
+
         });
       }
     },
@@ -94,30 +90,17 @@ export default {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           this.getRoleId();
-          let jsonobj = {
-            roleId: this.loginForm.roleId,
-            object: {
-              nickname: this.loginForm.nickname,
-              password: this.loginForm.password,
-              name: "刘建成",
-              phone: "1234567890",
-            },
-          }
-          sessionStorage.setItem("info", JSON.stringify(jsonobj));
-          this.$router.push("/index");
-
           // let jsonobj = {
-          //   roleId: this.loginForm.roleId,
-          //   object: {
-          //     nickname: this.loginForm.nickname,
-          //     password: this.loginForm.password,
-          //     name: "刘建成",
-          //     sex: 1,
-          //     phone: "1234567890",
-          //   },
-          // };
+            // roleId: this.loginForm.roleId,
+            // object: {
+              // nickname: this.loginForm.nickname,
+              // password: this.loginForm.password,
+              // name: this.loginForm.name,
+              // phone:this.loginForm.phone,
+            // },
+          // }
           // sessionStorage.setItem("info", JSON.stringify(jsonobj));
-          // this.$router.push("/index");
+          
 
         } else {
           console.log("error submit!!");
@@ -129,7 +112,7 @@ export default {
       this.loginForm = {
         nickname: "",
         password: "",
-        roleId: 0,
+        roleId: 4,
       };
       // let result = await this.$API.loginAPI.test()
       // console.log(result)

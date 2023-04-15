@@ -44,9 +44,9 @@
           <el-tag
               :type="
                  scope.row.workerStatus == 0
-                ? 'suceess'
+                ? 'primary'
                 : scope.row.workerStatus == 1
-                ? 'danger'
+                ? 'info'
                 : 'success'
             "
               disable-transitions
@@ -61,7 +61,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="operate" label="操作">
+      <el-table-column prop="operate" label="操作" fixed="right" width="150">
         <template slot-scope="scope">
           <el-button size="small" type="success" @click="mod(scope.row)"
           >修改</el-button
@@ -154,75 +154,75 @@ export default {
     return {
       stationDisabled: true,
       showStatus:false,
-      // workerList: [
-      //   {
-      //     workerId: 1,
-      //     workerNickName: "No1",
-      //     workerPassword: "2112",
-      //     workerName: "王师傅",
-      //     workerPhone: "17767639938",
-      //     workerStatus: 0
-      //   },
-      //   {
-      //     workerId: 2,
-      //     workerNickName: "No2",
-      //     workerPassword: "2112",
-      //     workerName: "李师傅",
-      //     workerPhone: "17767639938",
-      //     workerStatus: 1
-      //   },
-      //   {
-      //     workerId: 3,
-      //     workerNickName: "No3",
-      //     workerPassword: "2112",
-      //     workerName: "徐师傅",
-      //     workerPhone: "13223238",
-      //     workerStatus: 2
-      //   },
-      // ],
-      // companyList:[
-      //   {
-      //   companyId:"1",
-      //   companyNickName:"No1",
-      //   companyPassword:"123456",
-      //   companyPhone:"1212133",
-      //   companyName:"澳门娱乐",
-      //   companyStatus:"0",
-      //   companyCity:"福州",
-      //   companyCounty:"中国",
-      //   companyStreet:"上街",
-      //   companyDetail:"福州大学",
-      //   companyPrice:"21"
-      //   },
-      //   {
-      //     companyId:"2",
-      //     companyNickName:"No2",
-      //     companyPassword:"123456",
-      //     companyPhone:"1212133",
-      //     companyName:"香港娱乐",
-      //     companyStatus:"0",
-      //     companyCity:"福州",
-      //     companyCounty:"中国",
-      //     companyStreet:"上街",
-      //     companyDetail:"福州大学",
-      //     companyPrice:"21"
-      //   },
-      //   {
-      //     companyId:"3",
-      //     companyNickName:"No3",
-      //     companyPassword:"123456",
-      //     companyPhone:"1212133",
-      //     companyName:"香蕉娱乐",
-      //     companyStatus:"2",
-      //     companyCity:"福州",
-      //     companyCounty:"中国",
-      //     companyStreet:"上街",
-      //     companyDetail:"福州大学",
-      //     companyPrice:"21"
-      //   },
-      // ],
-      workerList: [],
-      companyList:[],
+      workerList: [
+        {
+          workerId: 1,
+          workerNickName: "No1",
+          workerPassword: "2112",
+          workerName: "王师傅",
+          workerPhone: "17767639938",
+          workerStatus: 0
+        },
+        {
+          workerId: 2,
+          workerNickName: "No2",
+          workerPassword: "2112",
+          workerName: "李师傅",
+          workerPhone: "17767639938",
+          workerStatus: 1
+        },
+        {
+          workerId: 3,
+          workerNickName: "No3",
+          workerPassword: "2112",
+          workerName: "徐师傅",
+          workerPhone: "13223238",
+          workerStatus: 1
+        },
+      ],
+      companyList:[
+        {
+        companyId:"1",
+        companyNickName:"No1",
+        companyPassword:"123456",
+        companyPhone:"1212133",
+        companyName:"澳门娱乐",
+        companyStatus:"0",
+        companyCity:"福州",
+        companyCounty:"中国",
+        companyStreet:"上街",
+        companyDetail:"福州大学",
+        companyPrice:"21"
+        },
+        {
+          companyId:"2",
+          companyNickName:"No2",
+          companyPassword:"123456",
+          companyPhone:"1212133",
+          companyName:"香港娱乐",
+          companyStatus:"0",
+          companyCity:"福州",
+          companyCounty:"中国",
+          companyStreet:"上街",
+          companyDetail:"福州大学",
+          companyPrice:"21"
+        },
+        {
+          companyId:"3",
+          companyNickName:"No3",
+          companyPassword:"123456",
+          companyPhone:"1212133",
+          companyName:"香蕉娱乐",
+          companyStatus:"2",
+          companyCity:"福州",
+          companyCounty:"中国",
+          companyStreet:"上街",
+          companyDetail:"福州大学",
+          companyPrice:"21"
+        },
+      ],
+      // workerList: [],
+      // companyList:[],
       userNickname: '',
       userName: '',
       userPhone: '',
@@ -316,6 +316,7 @@ export default {
     async doMod() {
       console.log("update")
       //console.log(this.form.workerId)
+
       let result = await this.$API.systemAPI.updateworkerwithstatus(this.form)
       if (result.data.code == "200") {
         this.$message({
@@ -420,44 +421,44 @@ export default {
       // console.log(js)
       //roleID==2代表公司
       if(this.info.roleId==2){
-        // let result={
-        //   others:"其他信息",
-        //   data:{
-        //     code: '200',
-        //     message: "查询成功",
-        //     data: [
-        //       {
-        //         workerId: 1,
-        //         workerNickName: "No1",
-        //         workerPassword: "2112",
-        //         workerName: "王师傅",
-        //         workerPhone: "17767639938",
-        //         workerStatus: 0
-        //       },
-        //       {
-        //         workerId: 2,
-        //         workerNickName: "No2",
-        //         workerPassword: "2112",
-        //         workerName: "李师傅",
-        //         workerPhone: "17767639938",
-        //         workerStatus: 1
-        //       },
-        //       {
-        //         workerId: 3,
-        //         workerNickName: "No3",
-        //         workerPassword: "2112",
-        //         workerName: "徐师傅",
-        //         workerPhone: "13223238",
-        //         workerStatus: 1
-        //       },
-        //     ]
-        //   }
-        // }
-        let result=await this.$API.systemAPI.companyworkers({
-          companyId: this.info.roleId,
-          page: this.page,
-          recPerPage: this.recPerPage,
-        })
+        let result={
+          others:"其他信息",
+          data:{
+            code: '200',
+            message: "查询成功",
+            data: [
+              {
+                workerId: 1,
+                workerNickName: "No1",
+                workerPassword: "2112",
+                workerName: "王师傅",
+                workerPhone: "17767639938",
+                workerStatus: 0
+              },
+              {
+                workerId: 2,
+                workerNickName: "No2",
+                workerPassword: "2112",
+                workerName: "李师傅",
+                workerPhone: "17767639938",
+                workerStatus: 1
+              },
+              {
+                workerId: 3,
+                workerNickName: "No3",
+                workerPassword: "2112",
+                workerName: "徐师傅",
+                workerPhone: "13223238",
+                workerStatus: 1
+              },
+            ]
+          }
+        }
+        // let result=await this.$API.systemAPI.companyworkers({
+        //   companyId: this.info.roleId,
+        //   page: this.page,
+        //   recPerPage: this.recPerPage,
+        // })
         if (result.data.code == "200") {
           this.workerList= result.data.data;
           this.total = result.data.pager.recTotal;

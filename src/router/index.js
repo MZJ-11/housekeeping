@@ -1,5 +1,6 @@
 
 import VueRouter from 'vue-router';
+// import { createRouter,createWebHashHistory } from "vue-router"
 
 const routes = [
     {
@@ -29,15 +30,15 @@ const routes = [
                 },
                 component: () => import('../components/Home')
             },
-            {
-                path:'modinfo',
-                name:'modinfo',
-                meta:{
-                    title:'修改个人信息',
-                    isAnth:true
-                },
-                component:()=>import('../components/ModInfo')
-            },
+            // {
+            //     path:'modinfo',
+            //     name:'modinfo',
+            //     meta:{
+            //         title:'修改个人信息',
+            //         isAnth:true
+            //     },
+            //     component:()=>import('../components/ModInfo')
+            // },
             {
                 path: 'user',
                 name: 'user',
@@ -90,6 +91,28 @@ const routes = [
 const router = new VueRouter({
     routes
 })
+
+// const router = createRouter({
+//     /**
+//      * createWebHashHistory 使用这个比较好
+//      *      home:http://localhost:8080/#/
+//      *      about:http://localhost:8080/#/about
+//      * 
+//      *  原理：a标签锚点连接
+//      */
+//     /**
+//      * createWebHistory
+//      *      home:http://localhost:8080/
+//      *      about:http://localhost:8080/about
+//      * 此种方式，需要后台配合做重定向，否则会出现404问题
+//      * 
+//      * 原理：H5 pushState()
+//      */
+//     history:createWebHashHistory(),
+//     routes
+// })
+
+
 
 
 

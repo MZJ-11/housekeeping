@@ -120,12 +120,6 @@
             </el-input>
           </div>
         </el-form-item>
-        <!-- <el-form-item label="市县街" prop="address">
-          <el-col :span="20">
-            <v-distpicker @companyCity="onChangecompanyCity" @companyStreet="onChangecompanyStreet"
-              @area="onChangeArea"></v-distpicker>
-          </el-col>
-        </el-form-item> -->
         <el-form-item label="详细地址" prop="companyDetail">
           <el-col :span="20">
             <el-input v-model="form.companyDetail"></el-input>
@@ -202,6 +196,7 @@ export default {
       total: 0,
       centerDialogVisible: false,
       form: {
+        companyId:"",
         companyNickname: "",
         companyName: "",
         companyPassword: "",
@@ -406,73 +401,74 @@ export default {
       this.getAllList();
     },
     async getAllList() {
-      // let result = await this.$API.systemAPI.stations({
-      //   companyNickname: this.companyNickname,
-      //   companyName: this.companyName,
-      //   recPerPage: this.recPerPage,
-      //   page: this.page,
-      // });
-      let result = {
-        data: {
-          code: '200',
-          message: '查询成功',
-          data: [
-            {
-              companyId: 1,
-              companyNickname: "P2022001",
-              companyName: "喜乐平安家政公司",
-              companyDetail: "福州大学生活区",
-              companyPhone: "17767639938",
-              companyCity: "福州市",
-              companyCounty: "闽侯县",
-              companyStreet: "甘蔗街",
-              companyStatus: 0,
-              companyPrice: 100.00
-            },
-            {
-              companyId: 2,
-              companyNickname: "P2022002",
-              companyName: "阳光月子家政",
-              companyDetail: "福州大学生活区",
-              companyPhone: "17767639938",
-              companyCity: "厦门市",
-              companyCounty: "集美区",
-              companyStreet: "甘蔗街",
-              companyStatus: 1,
-              companyPrice: 120.00
-            },
-            {
-              companyId: 3,
-              companyNickname: "P2022003",
-              companyName: "挚爱绿萝家政",
-              companyDetail: "福州大学生活区",
-              companyPhone: "17767639938",
-              companyCity: "福州市",
-              companyCounty: "鼓楼区",
-              companyStreet: "甘蔗街",
-              companyStatus: 1,
-              companyPrice: 130.00
-            },
-            {
-              companyId: 4,
-              companyNickname: "P2022004",
-              companyName: "福康诚信家政",
-              companyDetail: "福州大学生活区",
-              companyPhone: "17767639938",
-              companyCity: "福州市",
-              companyCounty: "金山区",
-              companyStreet: "甘蔗街",
-              companyStatus: 0,
-              companyPrice: 140.00
-            },
+      let result = await this.$API.systemAPI.companys({
+        // companyNickname: this.companyNickname,
+        // companyName: this.companyName,
+        recPerPage: this.recPerPage,
+        page: this.page,
+      });
+      // let result = {
+      //   data: {
+      //     code: '200',
+      //     message: '查询成功',
+      //     data: [
+      //       {
+      //         companyId: 1,
+      //         companyNickname: "P2022001",
+      //         companyName: "喜乐平安家政公司",
+      //         companyDetail: "福州大学生活区",
+      //         companyPhone: "17767639938",
+      //         companyCity: "福州市",
+      //         companyCounty: "闽侯县",
+      //         companyStreet: "甘蔗街",
+      //         companyStatus: 0,
+      //         companyPrice: 100.00
+      //       },
+      //       {
+      //         companyId: 2,
+      //         companyNickname: "P2022002",
+      //         companyName: "阳光月子家政",
+      //         companyDetail: "福州大学生活区",
+      //         companyPhone: "17767639938",
+      //         companyCity: "厦门市",
+      //         companyCounty: "集美区",
+      //         companyStreet: "甘蔗街",
+      //         companyStatus: 1,
+      //         companyPrice: 120.00
+      //       },
+      //       {
+      //         companyId: 3,
+      //         companyNickname: "P2022003",
+      //         companyName: "挚爱绿萝家政",
+      //         companyDetail: "福州大学生活区",
+      //         companyPhone: "17767639938",
+      //         companyCity: "福州市",
+      //         companyCounty: "鼓楼区",
+      //         companyStreet: "甘蔗街",
+      //         companyStatus: 1,
+      //         companyPrice: 130.00
+      //       },
+      //       {
+      //         companyId: 4,
+      //         companyNickname: "P2022004",
+      //         companyName: "福康诚信家政",
+      //         companyDetail: "福州大学生活区",
+      //         companyPhone: "17767639938",
+      //         companyCity: "福州市",
+      //         companyCounty: "金山区",
+      //         companyStreet: "甘蔗街",
+      //         companyStatus: 0,
+      //         companyPrice: 140.00
+      //       },
 
-          ]
-        }
+      //     ]
+      //   }
 
-      }
+      // }
       if (result.data.code == "200") {
         console.log(result);
         this.companyList = result.data.data;
+        // 这里不知道返回的页码在那一层
         // this.page = result.data.pager.page;
         // this.recPerPage = result.data.pager.recPerPage;
         this.total = result.data.pager.recTotal;
@@ -483,18 +479,18 @@ export default {
         });
       }
     },
-    onChangecompanyStreet(companyStreet) {
-      this.form.companyStreet = companyStreet.value;
-      this.form.companyCity = "";
-      this.form.companyCounty = "";
-    },
-    onChangecompanyCity(companyCity) {
-      this.form.companyCity = companyCity.value;
-      this.form.companyCounty = "";
-    },
-    onChangeCounty(companyCounty) {
-      this.form.companyCounty = companyCounty.value;
-    },
+    // onChangecompanyStreet(companyStreet) {
+    //   this.form.companyStreet = companyStreet.value;
+    //   this.form.companyCity = "";
+    //   this.form.companyCounty = "";
+    // },
+    // onChangecompanyCity(companyCity) {
+    //   this.form.companyCity = companyCity.value;
+    //   this.form.companyCounty = "";
+    // },
+    // onChangeCounty(companyCounty) {
+    //   this.form.companyCounty = companyCounty.value;
+    // },
   },
   beforeMount() {
     this.getAllList();

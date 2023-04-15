@@ -45,9 +45,9 @@
           <el-tag
               :type="
                  scope.row.userStatus == 0
-                ? 'success'
+                ? 'primary'
                 : scope.row.userStatus == 1
-                ? 'danger'
+                ? 'info'
                 : 'success'
             "
               disable-transitions
@@ -61,7 +61,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="operate" label="操作">
+      <el-table-column prop="operate" label="操作" fixed ="right" width="150">
         <template slot-scope="scope">
           <el-button size="small" type="success" @click="mod(scope.row)"
             >修改</el-button

@@ -1,4 +1,5 @@
-import axios from 'axios'
+// import axios from 'axios'
+import axios from '../utils/request'
 
 
 export const addorder = (addorderForm) => axios({

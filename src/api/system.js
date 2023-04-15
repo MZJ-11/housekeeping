@@ -1,4 +1,5 @@
-import axios from 'axios'
+// import axios from 'axios'
+import axios from '../utils/request'
 
 
 export const login = (loginForm) => axios({
@@ -25,14 +26,8 @@ export const companys = (companysForm) => axios({
     url: `/api/system/companys`,
     method: 'post',
     data: {
-        city: companysForm.city,
-        county: companysForm.county,
-        street: companysForm.street,
-        lowPrice: companysForm.lowPrice,
-        highPrice: companysForm.highPrice,
-        companyName: companysForm.companyName,
         page: companysForm.page,
-        recPerpage: companysForm. recPerpage,
+        recPerPage: companysForm.recPerPage
     }
 });
 
@@ -175,13 +170,20 @@ export const deleteuser = (userId) => axios({
     }
 });
 
-
+// 增加了公司账号和名字,不知道后台有没有这个参数
 export const companysbymatching = (companysbymatchingForm) => axios({
     url: `/api/system/companysbymatching`,
     method: 'post',
     data: {
-        page: companysbymatchingForm.page,
-        recPerPage: companysbymatchingForm.recPerPage,
+
+        city:companysbymatchingForm.city,
+        county:companysbymatchingForm.county,
+        street:companysbymatchingForm.street,
+        lowPrice:companysbymatchingForm.lowPrice,
+        highPrice:companysbymatchingForm.highPrice,
+        companyName:companysbymatchingForm.companyName,
+        page:companysbymatchingForm.page,
+        recPerPage:companysbymatchingForm.recPerPage
     }
 });
 
@@ -190,6 +192,7 @@ export const addcompany = (addcompanyForm) => axios({
     url: `/api/system/addcompany`,
     method: 'post',
     data: {
+        companyId:addcompanyForm.companyId,
         companyNickname: addcompanyForm.companyNickname,
         companyPassword: addcompanyForm.companyPassword,
         companyPhone: addcompanyForm.companyPhone,
